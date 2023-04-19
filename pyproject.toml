@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "chat-bot-telegram"
+version = "0.1.0"
+description = ""
+authors = ["Maxim Sergeev <maxsergeev39+gh@gmail.com>"]
+readme = "README.md"
+packages = [{include = "chat_bot_telegram"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiogram = "^2.25.1"
+aioredis = "^2.0.1"
+environs = "^9.5.0"
+loguru = "^0.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
