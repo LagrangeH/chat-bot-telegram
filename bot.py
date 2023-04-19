@@ -1,5 +1,7 @@
 import asyncio
-import logging
+import sys
+
+from loguru import logger
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -11,8 +13,6 @@ from tgbot.handlers.admin import register_admin
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
 from tgbot.middlewares.environment import EnvironmentMiddleware
-
-logger = logging.getLogger(__name__)
 
 
 def register_all_middlewares(dp, config):
@@ -31,12 +31,21 @@ def register_all_handlers(dp):
 
 
 async def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
-    )
-    logger.info("Starting bot")
     config = load_config(".env")
+
+    logger.remove()
+    logger.add(
+        sys.stdout,
+        level="DEBUG" if config.debug else "INFO",
+        colorize=True,
+        serialize=False,
+        backtrace=config.debug,
+        diagnose=config.debug,
+        enqueue=True,
+        catch=True,
+    )
+
+    logger.info("Starting bot")
 
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
