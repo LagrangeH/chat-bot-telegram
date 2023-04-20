@@ -1,10 +1,9 @@
-from aiogram import Dispatcher
-from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
+from aiogram import Dispatcher, types
+from aiogram.dispatcher import FSMContext, filters
+from aiogram.types import Message, InlineQuery, PollOption, InlineQueryResultArticle
 
 from tgbot.misc import cute_cat
 from tgbot.misc.exchange_rates import get_exchange_rate
-# from tgbot.keyboards.inline import cities_kb
 from tgbot.misc.states import BotStates
 from tgbot.misc.weather import get_weather
 
@@ -69,7 +68,7 @@ async def convert_command(message: Message) -> None:
 
 async def convert_currency(message: Message, state: FSMContext) -> None:
     """
-    Handles currency conversion
+    Handles Convert state
     :param message:
     :param state:
     :return:
@@ -103,9 +102,30 @@ async def poll_command(message: Message) -> None:
     :return:
     """
     await message.reply(
-        "Введите вопрос и варианты ответа через запятую\n"
+        "В ответ на это сообщение введите вопрос и варианты ответа через запятую\n"
         "Пример: Какой фильм вы любите больше?, Властелин колец, Звездные войны",
     )
+    await BotStates.Poll.set()
+
+
+async def poll_creation(message: Message, state: FSMContext) -> None:
+    """
+    Handles Poll state
+    :param message:
+    :param state:
+    :return:
+    """
+    question, *options = message.text.split(',')
+    if len(options) < 2:
+        await message.reply("Нужно ввести вопрос и минимум 2 варианта ответа")
+    else:
+        await message.answer_poll(
+            question,
+            options,
+            is_anonymous=False,
+            allows_multiple_answers=True,
+        )
+    await state.finish()
 
 
 async def cancel_command(message: Message, state: FSMContext) -> None:
@@ -143,6 +163,7 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(convert_currency, state=BotStates.Convert)
     dp.register_message_handler(cat_command, commands=['cat'], state='*')
     dp.register_message_handler(poll_command, commands=['poll'], state='*')
+    dp.register_message_handler(poll_creation, state=BotStates.Poll)
 
     # Handler of undefined messages should be registered last
     dp.register_message_handler(undefined_message, state='*')
