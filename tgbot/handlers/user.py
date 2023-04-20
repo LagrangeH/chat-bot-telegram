@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
-from tgbot.misc import cute_cat
+from tgbot.misc.cute_cat import get_cat_picture
 from tgbot.misc.exchange_rates import get_exchange_rate
 from tgbot.misc.states import BotStates
 from tgbot.misc.weather import get_weather
@@ -16,7 +16,7 @@ async def start_or_help_commands(message: Message) -> None:
     """
     await message.reply(
         f"Чтобы начать, выбери любую команду из списка или напиши ее самостоятельно"
-        f"\n\n{message.bot['config'].commands}",
+        f"\n\n{message.bot['config'].commands}\n\n{message['config']}",
     )
 
 
@@ -35,6 +35,7 @@ async def weather_command(message: Message) -> None:
 
 async def weather_city(message: Message, state: FSMContext) -> None:
     """
+    Handles Weather state and sends weather info in chosen city
     :param message:
     :param state:
     :return:
@@ -69,7 +70,7 @@ async def convert_command(message: Message) -> None:
 
 async def convert_currency(message: Message, state: FSMContext) -> None:
     """
-    Handles Convert state
+    Handles Convert state and sends converted currency
     :param message:
     :param state:
     :return:
@@ -89,7 +90,7 @@ async def cat_command(message: Message) -> None:
     :param message:
     :return:
     """
-    cat = cute_cat.get_cat_picture(message.bot['config'].cat_api_key)
+    cat = get_cat_picture(message.bot['config'].cat_api_key)
     if cat is None:
         await message.reply("Котиков не нашлось")
     else:
@@ -111,7 +112,7 @@ async def poll_command(message: Message) -> None:
 
 async def poll_creation(message: Message, state: FSMContext) -> None:
     """
-    Handles Poll state
+    Handles Poll state and sends poll with given question and options
     :param message:
     :param state:
     :return:
