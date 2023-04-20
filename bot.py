@@ -40,7 +40,7 @@ async def main():
         catch=True,
     )
 
-    logger.info("Starting bot")
+    logger.debug("Configuring bot")
 
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
@@ -60,8 +60,12 @@ async def main():
         aiogram.types.BotCommand('cancel', 'Отменить текущую команду'),
     ])
 
+    bot['config'].commands = '\n'.join([f"/{command[1]} - {descr[1]}"
+                                        for command, descr in await bot.get_my_commands()])
+
     session = await bot.get_session()
 
+    logger.info("Bot started")
     try:
         await dp.start_polling()
     finally:
@@ -74,4 +78,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        logger.info("Bot stopped!")
+        logger.info("Bot stopped")
