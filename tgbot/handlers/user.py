@@ -1,6 +1,6 @@
-from aiogram import Dispatcher, types
-from aiogram.dispatcher import FSMContext, filters
-from aiogram.types import Message, InlineQuery, PollOption, InlineQueryResultArticle
+from aiogram import Dispatcher
+from aiogram.dispatcher import FSMContext
+from aiogram.types import Message
 
 from tgbot.misc import cute_cat
 from tgbot.misc.exchange_rates import get_exchange_rate

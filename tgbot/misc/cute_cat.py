@@ -1,7 +1,4 @@
-import json
-
 import requests
-from loguru import logger
 
 
 def get_cat_picture(api_key) -> str | None:
