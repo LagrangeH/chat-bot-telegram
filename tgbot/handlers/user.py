@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from tgbot.misc import cute_cat
+from tgbot.misc.exchange_rates import get_exchange_rate
 # from tgbot.keyboards.inline import cities_kb
 from tgbot.misc.states import BotStates
 from tgbot.misc.weather import get_weather
@@ -63,6 +64,23 @@ async def convert_command(message: Message) -> None:
         "Введите сумму и валюту, чтобы конвертировать валюту\n"
         "Пример: 100 usd rub",
     )
+    await BotStates.Convert.set()
+
+
+async def convert_currency(message: Message, state: FSMContext) -> None:
+    """
+    Handles currency conversion
+    :param message:
+    :param state:
+    :return:
+    """
+    amount, base, target = message.text.split()
+    exchange_rate = get_exchange_rate(float(amount), base, target, message.bot['config'].exchange_api_key)
+    if exchange_rate is None:
+        await message.reply("Что-то пошло не так. Попробуйте еще раз")
+    else:
+        await message.reply(f"<code>{amount}</code> {base} = <code>{exchange_rate}</code> {target}")
+    await state.finish()
 
 
 async def cat_command(message: Message) -> None:
@@ -122,6 +140,7 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(weather_command, commands=['weather'], state='*')
     dp.register_message_handler(weather_city, state=BotStates.Weather)
     dp.register_message_handler(convert_command, commands=['convert'], state='*')
+    dp.register_message_handler(convert_currency, state=BotStates.Convert)
     dp.register_message_handler(cat_command, commands=['cat'], state='*')
     dp.register_message_handler(poll_command, commands=['poll'], state='*')
 
