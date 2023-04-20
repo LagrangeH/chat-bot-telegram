@@ -14,5 +14,5 @@ def get_cat_picture(api_key) -> str | None:
     if response.status_code != 200:
         return None
 
-    data = json.loads(response.text)[0]
-    return data['url']
+    # data = json.loads(response.text)[0]
+    return response.json()[0]['url']

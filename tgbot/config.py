@@ -30,6 +30,7 @@ class Config:
     misc: Miscellaneous
     debug: bool
     cat_api_key: str
+    weather_api_key: str
 
 
 def load_config(path: str = None):
@@ -51,4 +52,5 @@ def load_config(path: str = None):
         misc=Miscellaneous(),
         debug=env.bool('DEBUG', False),
         cat_api_key=env.str("CAT_API_KEY"),
+        weather_api_key=env.str("WEATHER_API_KEY"),
     )

@@ -60,13 +60,14 @@ async def main():
         aiogram.types.BotCommand('cancel', 'Отменить текущую команду'),
     ])
 
-    # start
+    session = await bot.get_session()
+
     try:
         await dp.start_polling()
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
-        await bot.session.close()
+        await session.close()
 
 
 if __name__ == '__main__':
