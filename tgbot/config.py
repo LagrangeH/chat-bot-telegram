@@ -1,3 +1,4 @@
+import sys
 from dataclasses import dataclass
 
 from environs import Env
@@ -5,18 +6,11 @@ from loguru import logger
 
 
 @dataclass
-class DbConfig:
-    host: str
-    password: str
-    user: str
-    database: str
-
-
-@dataclass
-class TgBot:
-    token: str
-    admin_ids: list[int]
-    use_redis: bool
+class APIKeys:
+    bot: str
+    cat: str
+    weather: str
+    convert: str
 
 
 @dataclass
@@ -26,35 +20,40 @@ class Miscellaneous:
 
 @dataclass
 class Config:
-    tg_bot: TgBot
-    db: DbConfig
+    api_keys: APIKeys
     misc: Miscellaneous
     debug: bool
-    cat_api_key: str
-    weather_api_key: str
-    exchange_api_key: str
 
 
-def load_config(path: str = None):
-    logger.debug("Loading config")
+def load_config(path: str = None) -> Config:
     env = Env()
     env.read_env(path)
 
-    return Config(
-        tg_bot=TgBot(
-            token=env.str("BOT_TOKEN"),
-            admin_ids=list(map(int, env.list("ADMINS"))),
-            use_redis=env.bool("USE_REDIS"),
+    config = Config(
+        api_keys=APIKeys(
+            bot=env.str("BOT_TOKEN"),
+            cat=env.str("CAT_API_KEY", None),
+            weather=env.str("WEATHER_API_KEY"),
+            convert=env.str("EXCHANGE_API_KEY"),
         ),
-        db=DbConfig(
-            host=env.str('DB_HOST'),
-            password=env.str('DB_PASS'),
-            user=env.str('DB_USER'),
-            database=env.str('DB_NAME')
-        ),
-        misc=Miscellaneous(),
         debug=env.bool('DEBUG', False),
-        cat_api_key=env.str("CAT_API_KEY", None),
-        weather_api_key=env.str("WEATHER_API_KEY"),
-        exchange_api_key=env.str("EXCHANGE_API_KEY"),
+        misc=Miscellaneous(),
     )
+
+    # Configure loguru
+    logger.remove()
+
+    logger.add(
+        sys.stdout,
+        level="DEBUG" if config.debug else "INFO",
+        colorize=True,
+        serialize=False,
+        backtrace=config.debug,
+        diagnose=config.debug,
+        enqueue=False,
+        catch=True,
+    )
+
+    logger.debug("Configuring bot")
+
+    return config

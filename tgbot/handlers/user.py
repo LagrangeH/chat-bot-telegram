@@ -18,7 +18,7 @@ async def start_or_help_commands(message: Message) -> None:
     logger.debug("Got /start or /help command")
     await message.reply(
         f"Чтобы начать, выбери любую команду из списка или напиши ее самостоятельно"
-        f"\n\n{message.bot['config'].commands}\n\n{message['config']}",
+        f"\n\n{message.bot['config'].commands}",
     )
 
 
@@ -44,7 +44,7 @@ async def weather_city(message: Message, state: FSMContext) -> None:
     :return:
     """
     logger.debug("Got city name for weather in Weather state")
-    weather = get_weather(message.text, message.bot['config'].weather_api_key)
+    weather = get_weather(message.text, message.bot['config'].api_keys.weather)
     if weather is None:
         await message.answer(f"Город {message.text} не найден. Попробуйте еще раз")
         await state.finish()
@@ -82,7 +82,7 @@ async def convert_currency(message: Message, state: FSMContext) -> None:
     """
     logger.debug("Got currency for conversion in Convert state")
     amount, base, target = message.text.split()
-    exchange_rate = get_exchange_rate(float(amount), base, target, message.bot['config'].exchange_api_key)
+    exchange_rate = get_exchange_rate(float(amount), base, target, message.bot['config'].api_keys.convert)
     if exchange_rate is None:
         await message.reply("Что-то пошло не так. Попробуйте еще раз")
     else:
@@ -96,8 +96,8 @@ async def cat_command(message: Message) -> None:
     :param message:
     :return:
     """
-    logger.info("Got /cat command")
-    cat = get_cat_picture(message.bot['config'].cat_api_key)
+    logger.debug("Got /cat command")
+    cat = get_cat_picture(message.bot['config'].api_keys.cat)
     if cat is None:
         await message.reply("Котиков не нашлось")
     else:
@@ -147,6 +147,7 @@ async def cancel_command(message: Message, state: FSMContext) -> None:
     :param state:
     :return:
     """
+    logger.debug("Got /cancel command")
     await message.reply(
         "Отменено",
     )
@@ -159,8 +160,10 @@ async def undefined_message(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.debug("Got undefined message")
     await message.reply(
-        "Я не знаю такой команды, попробуй еще раз или выбери команду из списка\n👇",
+        f"Я не знаю такой команды, попробуй еще раз или выбери команду из списка"
+        f"\n\n{message.bot['config'].commands}",
     )
 
 
