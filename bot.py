@@ -26,7 +26,7 @@ async def main():
         serialize=False,
         backtrace=config.debug,
         diagnose=config.debug,
-        enqueue=True,
+        enqueue=False,
         catch=True,
     )
 

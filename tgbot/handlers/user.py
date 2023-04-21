@@ -1,6 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
+from loguru import logger
 
 from tgbot.misc.cute_cat import get_cat_picture
 from tgbot.misc.exchange_rates import get_exchange_rate
@@ -14,6 +15,7 @@ async def start_or_help_commands(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.debug("Got /start or /help command")
     await message.reply(
         f"Чтобы начать, выбери любую команду из списка или напиши ее самостоятельно"
         f"\n\n{message.bot['config'].commands}\n\n{message['config']}",
@@ -26,6 +28,7 @@ async def weather_command(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.debug("Got /weather command")
     await message.reply(
         "Выберите город или напишите название любого другого города, чтобы узнать погоду",
         # reply_markup=cities_kb,
@@ -40,6 +43,7 @@ async def weather_city(message: Message, state: FSMContext) -> None:
     :param state:
     :return:
     """
+    logger.debug("Got city name for weather in Weather state")
     weather = get_weather(message.text, message.bot['config'].weather_api_key)
     if weather is None:
         await message.answer(f"Город {message.text} не найден. Попробуйте еще раз")
@@ -61,6 +65,7 @@ async def convert_command(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.debug("Got /convert command")
     await message.reply(
         "Введите сумму и валюту, чтобы конвертировать валюту\n"
         "Пример: 100 usd rub",
@@ -75,6 +80,7 @@ async def convert_currency(message: Message, state: FSMContext) -> None:
     :param state:
     :return:
     """
+    logger.debug("Got currency for conversion in Convert state")
     amount, base, target = message.text.split()
     exchange_rate = get_exchange_rate(float(amount), base, target, message.bot['config'].exchange_api_key)
     if exchange_rate is None:
@@ -90,6 +96,7 @@ async def cat_command(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.info("Got /cat command")
     cat = get_cat_picture(message.bot['config'].cat_api_key)
     if cat is None:
         await message.reply("Котиков не нашлось")
@@ -103,6 +110,7 @@ async def poll_command(message: Message) -> None:
     :param message:
     :return:
     """
+    logger.debug("Got /poll command")
     await message.reply(
         "В ответ на это сообщение введите вопрос и варианты ответа через запятую\n"
         "Пример: Какой фильм вы любите больше?, Властелин колец, Звездные войны",
@@ -117,8 +125,10 @@ async def poll_creation(message: Message, state: FSMContext) -> None:
     :param state:
     :return:
     """
-    question, *options = message.text.split(',')
-    if len(options) < 2:
+    logger.debug("Got question and options for poll in Poll state")
+    question, *options = [s for s in message.text.split(',') if s]
+    logger.debug(f"Question: {question}, Options: {options}")
+    if len(options) < 2 or not all(options):
         await message.reply("Нужно ввести вопрос и минимум 2 варианта ответа")
     else:
         await message.answer_poll(

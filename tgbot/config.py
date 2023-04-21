@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from environs import Env
+from loguru import logger
 
 
 @dataclass
@@ -35,6 +36,7 @@ class Config:
 
 
 def load_config(path: str = None):
+    logger.debug("Loading config")
     env = Env()
     env.read_env(path)
 

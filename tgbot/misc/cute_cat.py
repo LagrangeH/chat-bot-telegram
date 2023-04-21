@@ -1,4 +1,5 @@
 import requests
+from loguru import logger
 
 
 def get_cat_picture(api_key) -> str | None:
@@ -12,5 +13,5 @@ def get_cat_picture(api_key) -> str | None:
     if response.status_code != 200:
         return None
 
-    # data = json.loads(response.text)[0]
+    logger.debug(f"Got a cute cat: {response.json()[0]['url']}")
     return response.json()[0]['url']
