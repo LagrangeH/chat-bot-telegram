@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from aiogram.types import BotCommand
 from aiogram import Bot, Dispatcher
