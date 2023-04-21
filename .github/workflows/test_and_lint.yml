@@ -27,7 +27,7 @@ jobs:
     - name: Get Poetry version
       run: poetry --version
     - name: Install dependencies
-      run: poetry install --with dev
+      run: poetry install --with dev -vvv
     - name: Test with pytest
       run: poetry run pytest . -v
     - name: Lint with flake8
