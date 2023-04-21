@@ -9,9 +9,6 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
-permissions:
-  contents: read
-
 jobs:
   build:
 
@@ -31,11 +28,6 @@ jobs:
       run: poetry --version
     - name: Install dependencies
       run: poetry install --with dev
-    - name: Create .env file
-      uses: canastro/copy-action@master
-      with:
-          source: ".env.dist"
-          target: ".env"
     - name: Test with pytest
       run: poetry run pytest . -v
     - name: Lint with flake8
