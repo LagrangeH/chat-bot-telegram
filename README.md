@@ -60,4 +60,13 @@ This is a simple chatbot for Telegram. It is written in Python and uses the [aio
     # https://exchangeratesapi.io/
     EXCHANGE_API_KEY=
     ```
-   
+
+## Usage
+
+1. Run the bot
+    ```bash
+    poetry run python main.py
+    ```
+
+2. Send a message to the bot in Telegram
+3. Use the `/help` command to see all available commands
