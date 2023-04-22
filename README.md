@@ -1,4 +1,8 @@
-# Telegram Chat Bot
+<h1 align="center">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/LagrangeH/chat-bot-telegram/test_and_lint.yml">
+    <img alt="GitHub repo file count" src="https://img.shields.io/github/directory-file-count/LagrangeH/chat-bot-telegram">
+    <img alt="Python 3.10" src="https://img.shields.io/badge/python3.10-blue.svg">
+</h1>
 
 This is a simple chatbot for Telegram. It is written in Python and uses the [aiogram](https://aiogram.dev/).
 
