@@ -4,6 +4,7 @@ from aiogram.types import BotCommand
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils import exceptions
+from aiohttp import ClientSession
 from environs import EnvError
 from loguru import logger
 
@@ -24,10 +25,10 @@ async def set_bot_commands(bot: Bot) -> None:
                                         for command, descr in await bot.get_my_commands()])
 
 
-async def main(config: Config):
+async def main(config: Config) -> None:
     bot = Bot(token=config.api_keys.bot, parse_mode='HTML')
     dp = Dispatcher(bot, storage=MemoryStorage())
-    session = await bot.get_session()
+    session: ClientSession = await bot.get_session()
 
     bot['config'] = config
     register_user(dp)
@@ -45,7 +46,7 @@ async def main(config: Config):
 
 if __name__ == '__main__':
     try:
-        configuration = load_config(".env")
+        configuration: Config = load_config(".env")
     except EnvError as e:
         logger.error(e)
     else:

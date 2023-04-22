@@ -2,7 +2,7 @@ import requests
 from loguru import logger
 
 
-def get_cat_picture(api_key) -> str | None:
+def get_cat_picture(api_key: str | None = None) -> str | None:
     """
     Get random picture from thecatapi.com
     :param api_key:

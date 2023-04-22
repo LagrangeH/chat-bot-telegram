@@ -44,19 +44,19 @@ async def weather_city(message: Message, state: FSMContext) -> None:
     :return:
     """
     logger.debug("Got city name for weather in Weather state")
+    await state.finish()
     weather = get_weather(message.text, message.bot['config'].api_keys.weather)
     if weather is None:
         await message.answer(f"Город {message.text} не найден. Попробуйте еще раз")
-        await state.finish()
-    else:
-        await message.reply(
-            f"Погода в городе <b>{message.text}</b>: {weather['description']}\n"
-            f"Температура: <code>{weather['temperature']}°C</code>\n"
-            f"Ощущается как: <code>{weather['feels_like']}°C</code>\n"
-            f"Влажность: <code>{weather['humidity']}%</code>\n"
-            f"Скорость ветра: <code>{weather['wind_speed']} м/с</code>",
-        )
-    await state.finish()
+        return
+
+    await message.reply(
+        f"Погода в городе <b>{message.text}</b>: {weather['description']}\n"
+        f"Температура: <code>{weather['temperature']}°C</code>\n"
+        f"Ощущается как: <code>{weather['feels_like']}°C</code>\n"
+        f"Влажность: <code>{weather['humidity']}%</code>\n"
+        f"Скорость ветра: <code>{weather['wind_speed']} м/с</code>",
+    )
 
 
 async def convert_command(message: Message) -> None:
@@ -81,8 +81,14 @@ async def convert_currency(message: Message, state: FSMContext) -> None:
     :return:
     """
     logger.debug("Got currency for conversion in Convert state")
+
     amount, base, target = message.text.split()
+    if not amount.isdigit():
+        await message.reply("Сумма должна быть целым числом. Попробуйте еще раз")
+        return
+
     exchange_rate = get_exchange_rate(float(amount), base, target, message.bot['config'].api_keys.convert)
+
     if exchange_rate is None:
         await message.reply("Что-то пошло не так. Попробуйте еще раз")
     else:
@@ -167,7 +173,7 @@ async def undefined_message(message: Message) -> None:
     )
 
 
-def register_user(dp: Dispatcher):
+def register_user(dp: Dispatcher) -> None:
     # Cancel command handler should be registered before other handlers
     dp.register_message_handler(cancel_command, commands=['cancel'], state='*')
 

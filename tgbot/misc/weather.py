@@ -13,7 +13,7 @@ def kelvin_to_celsius(temperature: float | int) -> float:
     return round(temperature - 273.15, 1)
 
 
-def get_weather(city: str, api_key):
+def get_weather(city: str, api_key) -> dict[str, str | float | int] | None:
     url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&lang=ru'
 
     response = requests.get(url)
