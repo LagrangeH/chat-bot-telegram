@@ -4,6 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["Maxim Sergeev <maxsergeev39+gh@gmail.com>"]
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/LagrangeH/chat-bot-telegram"
 
 [tool.poetry.dependencies]
 python = "^3.10"
