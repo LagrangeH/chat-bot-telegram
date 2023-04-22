@@ -69,7 +69,7 @@ This is a simple chatbot for Telegram. It is written in Python and uses the [aio
 
 1. Run the bot
     ```bash
-    poetry run python main.py
+    poetry run python bot.py
     ```
 
 2. Send a message to the bot in Telegram
