@@ -18,6 +18,38 @@ def configure_loguru(debug: bool = False) -> None:
         serialize=False,
         backtrace=debug,
         diagnose=debug,
-        enqueue=False,
+        enqueue=not debug,
         catch=True,
     )
+
+    logger.add(
+        "logs/error.log",
+        level="ERROR",
+        format="{time} | {file}:{function}:{line} - {message}",
+        colorize=False,
+        serialize=False,
+        backtrace=False,
+        diagnose=False,
+        enqueue=True,
+        catch=True,
+        rotation="10 MB",
+        retention="1 month",
+        compression="zip",
+        delay=True,
+    )
+
+    if debug:
+        logger.add(
+            "logs/debug.log",
+            level="DEBUG",
+            colorize=False,
+            serialize=False,
+            backtrace=True,
+            diagnose=True,
+            enqueue=False,
+            catch=True,
+            rotation="10 MB",
+            retention="1 month",
+            compression="zip",
+            delay=True,
+        )
