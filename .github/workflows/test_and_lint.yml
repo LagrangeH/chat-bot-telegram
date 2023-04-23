@@ -16,6 +16,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    # Cache the virtualenvs created by Poetry
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
