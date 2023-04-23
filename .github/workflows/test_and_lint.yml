@@ -29,6 +29,7 @@ jobs:
     - name: Install dependencies
       run: poetry install --with dev -vvv
     - name: Load API keys
+    - shell: bash
       env:
         CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
     - name: Test with pytest
