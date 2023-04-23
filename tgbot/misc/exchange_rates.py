@@ -3,7 +3,8 @@ import requests
 
 def get_exchange_rate(amount: int | float, base: str, target: str, api_key) -> float | None:
     response = requests.get(
-        f"https://api.apilayer.com/exchangerates_data/convert?to={target}&from={base}&amount={amount}",
+        f"https://api.apilayer.com/exchangerates_data/"
+        f"convert?to={target}&from={base}&amount={amount}",
         headers={'apikey': api_key}
     )
 

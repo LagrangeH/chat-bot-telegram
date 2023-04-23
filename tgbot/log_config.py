@@ -21,4 +21,3 @@ def configure_loguru(debug: bool = False) -> None:
         enqueue=False,
         catch=True,
     )
-

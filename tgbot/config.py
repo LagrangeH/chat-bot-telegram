@@ -1,8 +1,6 @@
-import sys
 from dataclasses import dataclass
 
 from environs import Env
-from loguru import logger
 
 
 @dataclass
