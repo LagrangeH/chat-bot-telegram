@@ -39,7 +39,7 @@ This is a simple chatbot for Telegram. It is written in Python and uses the [aio
 
 6. Create a virtual environment
     ```bash
-    poetry use python3.10
+    poetry env use python3.10
     ```
 
 7. Install dependencies
