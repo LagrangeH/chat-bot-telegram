@@ -1,8 +1,9 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from loguru import logger
 
+from tgbot.keyboards import inline
 from tgbot.misc.cute_cat import get_cat_picture
 from tgbot.misc.exchange_rates import get_exchange_rate
 from tgbot.misc.states import BotStates
@@ -31,7 +32,7 @@ async def weather_command(message: Message) -> None:
     logger.debug("Got /weather command")
     await message.reply(
         "Выберите город или напишите название любого другого города, чтобы узнать погоду",
-        # reply_markup=cities_kb,
+        reply_markup=inline.cities
     )
     await BotStates.Weather.set()
 
@@ -52,6 +53,22 @@ async def weather_city(message: Message, state: FSMContext) -> None:
 
     await message.reply(
         f"Погода в городе <b>{message.text}</b>: {weather['description']}\n"
+        f"Температура: <code>{weather['temperature']}°C</code>\n"
+        f"Ощущается как: <code>{weather['feels_like']}°C</code>\n"
+        f"Влажность: <code>{weather['humidity']}%</code>\n"
+        f"Скорость ветра: <code>{weather['wind_speed']} м/с</code>",
+    )
+
+
+async def weather_city_callback(query: CallbackQuery, state: FSMContext) -> None:
+    logger.debug("Got city name in callback query")
+    await state.finish()
+    # await query.bot.answer_inline_query()
+    weather = get_weather(query.data.split(':')[1], query.bot['config'].api_keys.weather)
+    await query.bot.answer_callback_query(query.id)
+    await query.bot.send_message(
+        query.from_user.id,
+        f"Погода в городе <b>{query.data.split(':')[1]}</b>: {weather['description']}\n"
         f"Температура: <code>{weather['temperature']}°C</code>\n"
         f"Ощущается как: <code>{weather['feels_like']}°C</code>\n"
         f"Влажность: <code>{weather['humidity']}%</code>\n"
@@ -185,6 +202,8 @@ def register_user(dp: Dispatcher) -> None:
     dp.register_message_handler(cat_command, commands=['cat'], state='*')
     dp.register_message_handler(poll_command, commands=['poll'], state='*')
     dp.register_message_handler(poll_creation, state=BotStates.Poll)
+
+    dp.register_callback_query_handler(weather_city_callback, lambda c: c.data.startswith('city'), state='*')
 
     # Handler of undefined messages should be registered last
     dp.register_message_handler(undefined_message, state='*')

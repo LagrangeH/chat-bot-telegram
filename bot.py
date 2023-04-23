@@ -33,10 +33,12 @@ async def set_bot_commands(bot: Bot) -> None:
 
 
 async def run_bot(config: Config) -> None:
+    logger.debug("Starting bot")
     bot = Bot(token=config.api_keys.bot, parse_mode='HTML')
     dp = Dispatcher(bot, storage=MemoryStorage())
     session: ClientSession = await bot.get_session()
 
+    logger.debug("Configuring bot")
     bot['config'] = config
     register_user(dp)
     await set_bot_commands(bot)
