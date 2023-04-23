@@ -41,7 +41,7 @@ async def run_bot(config: Config) -> None:
 
     logger.debug("Configuring bot")
     bot['config'] = config
-    dp.setup_middleware(ThrottlingMiddleware(limit=0.5))
+    dp.setup_middleware(ThrottlingMiddleware(limit=.5))
     register_user(dp)
     await set_bot_commands(bot)
 

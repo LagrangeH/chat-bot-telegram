@@ -4,6 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from loguru import logger
 
 from tgbot.keyboards import inline
+from tgbot.middlewares import throttling
 from tgbot.misc.cute_cat import get_cat_picture
 from tgbot.misc.exchange_rates import get_exchange_rate
 from tgbot.misc.states import BotStates
@@ -37,6 +38,7 @@ async def weather_command(message: Message) -> None:
     await BotStates.Weather.set()
 
 
+@throttling.rate_limit(3, 'weather')
 async def weather_city(message: Message, state: FSMContext) -> None:
     """
     Handles Weather state and sends weather info in chosen city
@@ -60,6 +62,7 @@ async def weather_city(message: Message, state: FSMContext) -> None:
     )
 
 
+@throttling.rate_limit(5, 'weather')
 async def weather_city_callback(query: CallbackQuery, state: FSMContext) -> None:
     logger.debug("Got city name in callback query")
     await state.finish()
@@ -90,6 +93,7 @@ async def convert_command(message: Message) -> None:
     await BotStates.Convert.set()
 
 
+@throttling.rate_limit(3, 'convert')
 async def convert_currency(message: Message, state: FSMContext) -> None:
     """
     Handles Convert state and sends converted currency
@@ -113,6 +117,7 @@ async def convert_currency(message: Message, state: FSMContext) -> None:
     await state.finish()
 
 
+@throttling.rate_limit(2, 'cat')
 async def cat_command(message: Message) -> None:
     """
     Handles /cat command and sends random cat picture

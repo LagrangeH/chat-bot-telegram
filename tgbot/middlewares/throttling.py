@@ -70,9 +70,9 @@ class ThrottlingMiddleware(BaseMiddleware):
         await asyncio.sleep(delta)
 
 
-def rate_limit(limit: int, key=None):
+def rate_limit(limit: int, key: str = None):
     """
-    Decorator for configuring rate limit and key in different functions.
+    Decorator for configuring rate limit and key in different functions
     :param limit:
     :param key:
     :return:
