@@ -28,8 +28,11 @@ jobs:
       run: poetry --version
     - name: Install dependencies
       run: poetry install --with dev -vvv
+    - name: Load API keys
+      env:
+        CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
     - name: Test with pytest
-      run: poetry run pytest . -v
+      run: poetry run pytest . -v --cat_api_key $CAT_API_KEY
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
