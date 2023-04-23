@@ -62,7 +62,7 @@ async def weather_city(message: Message, state: FSMContext) -> None:
     )
 
 
-@throttling.rate_limit(5, 'weather')
+@throttling.rate_limit(3, 'weather')
 async def weather_city_callback(query: CallbackQuery, state: FSMContext) -> None:
     logger.debug("Got city name in callback query")
     await state.finish()

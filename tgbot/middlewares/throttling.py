@@ -1,9 +1,10 @@
 import asyncio
 
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher
 from aiogram.dispatcher import DEFAULT_RATE_LIMIT
 from aiogram.dispatcher.handler import current_handler, CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
+from aiogram.types import Message, CallbackQuery
 from aiogram.utils.exceptions import Throttled
 from loguru import logger
 
@@ -14,14 +15,18 @@ class ThrottlingMiddleware(BaseMiddleware):
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message, data: dict):
-        """
-        This handler is called when dispatcher receives a message
-        :param message:
-        """
+    async def on_process_message(self, message: Message, data: dict) -> None:
+        await self._throttle(message, data)
+
+    async def on_process_callback_query(self, callback_query: CallbackQuery, data: dict) -> None:
+        await self._throttle(callback_query, data)
+
+    async def _throttle(self, event: Message | CallbackQuery, data: dict) -> None:
+        if not isinstance(event, (Message, CallbackQuery)):
+            return
+
         # Get current handler
         handler = current_handler.get()
-
         # Get dispatcher from context
         dispatcher = Dispatcher.get_current()
 
@@ -31,32 +36,27 @@ class ThrottlingMiddleware(BaseMiddleware):
             key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
         else:
             limit = self.rate_limit
-            key = f"{self.prefix}_message"
+            key = f"{self.prefix}_{'message' if isinstance(event, Message) else 'callback_query'}"
 
-        # Use Dispatcher.throttle method.
         try:
             await dispatcher.throttle(key, rate=limit)
 
         except Throttled as t:
-            # Execute action
-            await self.message_throttled(message, t)
-
-            # Cancel current handler
+            await self.event_throttled(event, t)
             raise CancelHandler()
 
-    async def message_throttled(self, message: types.Message, throttled: Throttled):
+    async def event_throttled(self, event: Message | CallbackQuery, throttled: Throttled):
         """
-        Notify user only on first exceed and notify about unlocking only on last exceed
-        :param message:
+        Notify user only on first exceed
+        :param event:
         :param throttled:
         """
         handler = current_handler.get()
-        dispatcher = Dispatcher.get_current()
 
         if handler:
             key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
         else:
-            key = f"{self.prefix}_message"
+            key = f"{self.prefix}_{'message' if isinstance(event, Message) else 'callback_query'}"
 
         # Calculate how many times is left till the block ends
         delta = throttled.rate - throttled.delta
@@ -65,7 +65,11 @@ class ThrottlingMiddleware(BaseMiddleware):
         if throttled.exceeded_count <= 2:
             logger.debug(f"Anti-flood: {key} exceeded {throttled.exceeded_count} times "
                          f"in {throttled.rate} seconds")
-            await message.reply('Слишком много запросов! ')
+            await event.answer('Слишком много запросов!')
+
+        # Stop processing animation on inline button for throttled queries
+        elif isinstance(event, CallbackQuery):
+            await event.bot.answer_callback_query(event.id)
 
         await asyncio.sleep(delta)
 
