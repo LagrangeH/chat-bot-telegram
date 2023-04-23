@@ -74,3 +74,21 @@ This is a simple chatbot for Telegram. It is written in Python and uses the [aio
 
 2. Send a message to the bot in Telegram
 3. Use the `/help` command to see all available commands
+
+## Testing
+
+The [pytest](https://docs.pytest.org/) framework is used for testing. Some unit-tests require parameters to be passed in.
+
+* Parameters can be optionally passed in command line mode:
+
+   ```bash
+   poetry run pytest /tests --cat-api-key="..." --weather-api-key="..." --exchange-api-key="..."
+   ```
+
+If some parameters were not passed in command line mode, they will be taken from the .env file, otherwise, tests that require these parameters will be skipped.
+
+* To run tests with parameters passed from .env or without passing parameters, the following command is sufficient:
+
+   ```bash
+   poetry run pytest /tests
+   ```
