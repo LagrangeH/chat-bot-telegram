@@ -31,7 +31,9 @@ jobs:
     - name: Test with pytest
       env:
         CAT_API_KEY: ${{ secrets.CAT_API_KEY }}
-      run: cd tests && pytest -v --cat_api_key "$CAT_API_KEY"
+      run: |
+        cd tests
+        poetry run pytest -v --cat_api_key "$CAT_API_KEY"
     - name: Lint with flake8
       run: |
         pwd
