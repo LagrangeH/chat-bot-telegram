@@ -4,7 +4,7 @@
     <a href="https://www.python.org/"><img alt="Python 3.10" src="https://img.shields.io/badge/python3.10-blue.svg"></a>
 </h1>
 
-This is a simple chatbot for Telegram. It is written in Python and uses the [aiogram](https://aiogram.dev/).
+This is a simple chatbot for Telegram. It is written in Python and uses the [aiogram](https://aiogram.dev/). Try it out [here](https://t.me/chat_bot_lagrange_bot)
 
 ## Features
 
