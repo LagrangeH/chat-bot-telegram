@@ -10,6 +10,7 @@ from loguru import logger
 
 from tgbot.config import load_config, Config
 from tgbot.handlers.user import register_user
+from tgbot.log_config import configure_loguru
 
 
 async def set_bot_commands(bot: Bot) -> None:
@@ -53,6 +54,7 @@ async def run_bot(config: Config) -> None:
 def main() -> None:
     try:
         configuration: Config = load_config(".env")
+        configure_loguru(configuration.debug)
     except EnvError as e:
         logger.error(e)
     else:

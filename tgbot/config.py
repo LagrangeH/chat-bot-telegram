@@ -29,7 +29,7 @@ def load_config(path: str = None) -> Config:
     env = Env()
     env.read_env(path)
 
-    config = Config(
+    return Config(
         api_keys=APIKeys(
             bot=env.str("BOT_TOKEN"),
             cat=env.str("CAT_API_KEY", None),
@@ -39,21 +39,3 @@ def load_config(path: str = None) -> Config:
         debug=env.bool('DEBUG', False),
         misc=Miscellaneous(),
     )
-
-    # Configure loguru
-    logger.remove()
-
-    logger.add(
-        sys.stdout,
-        level="DEBUG" if config.debug else "INFO",
-        colorize=True,
-        serialize=False,
-        backtrace=config.debug,
-        diagnose=config.debug,
-        enqueue=False,
-        catch=True,
-    )
-
-    logger.debug("Configuring bot")
-
-    return config
