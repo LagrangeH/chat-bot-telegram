@@ -13,6 +13,7 @@ This is a simple chatbot for Telegram. It is written in Python and uses the [aio
 * Using the `/weather` command, you can find out the weather in any city (by [OpenWeatherMap](https://openweathermap.org/))
 * The `/poll` command allows you to create a poll
 * All commands are also available in the Telegram groups
+* Throttling is used to save resources and API requests
 
 ## Installation
 
