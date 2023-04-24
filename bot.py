@@ -9,7 +9,7 @@ from environs import EnvError
 from loguru import logger
 
 from tgbot.config import load_config, Config
-from tgbot.handlers.user import register_user
+from tgbot.handlers import register_handlers
 from tgbot.log_config import configure_loguru
 from tgbot.middlewares.throttling import ThrottlingMiddleware
 
@@ -42,7 +42,7 @@ async def run_bot(config: Config) -> None:
     logger.debug("Configuring bot")
     bot['config'] = config
     dp.setup_middleware(ThrottlingMiddleware(limit=.5))
-    register_user(dp)
+    register_handlers(dp)
     await set_bot_commands(bot)
 
     logger.opt(colors=True).info(f"Bot started{' <blue>in debug mode</blue>' if config.debug else ''}")
