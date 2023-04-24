@@ -74,6 +74,11 @@ currencies = InlineKeyboardMarkup(
 
 
 def create_currency_amounts_kb(amount: float | int = 100) -> InlineKeyboardMarkup:
+    """
+    Create inline keyboard with currency amount and operations depending on amount
+    :param amount:
+    :return:
+    """
     term = 10 ** len(str(amount)) // 10
     return InlineKeyboardMarkup(
         inline_keyboard=[

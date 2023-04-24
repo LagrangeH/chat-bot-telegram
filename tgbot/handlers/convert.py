@@ -13,7 +13,11 @@ from tgbot.misc.weather import get_weather
 
 async def convert_command(message: Message) -> None:
     """
-    Handles /convert command
+    Handles /convert command.
+    There are two ways to get the result:
+        1. Via message
+        2. Via inline keyboard
+
     :param message:
     :return:
     """
@@ -47,7 +51,7 @@ async def convert_message(message: Message, state: FSMContext) -> None:
         float(amount),
         base,
         target,
-        message.bot['config'].api_keys.convert_message
+        message.bot['config'].api_keys.convert
     )
 
     if exchange_rate is None:
@@ -57,23 +61,40 @@ async def convert_message(message: Message, state: FSMContext) -> None:
 
 
 async def convert_to_callback(query: CallbackQuery, state: FSMContext) -> None:
+    """
+    Handles if a user chooses to use the inline keyboard and selects the base currency
+    :param query:
+    :param state:
+    :return:
+    """
+    # Parse query data provided by inline keyboard in format: 'convert_to:USD:0:0'
     query_data = query.data.split(':')
+
     await ConvertStates.ConvertTo.set()
+
+    # Save base currency to state
     await state.update_data(base=query_data[1])
 
+    # Remove chosen currency from inline keyboard
     edited_kb = inline.currencies
     edited_kb['inline_keyboard'][int(query_data[2])].pop(int(query_data[3]))
 
+    # Send updated inline keyboard
     await query.bot.edit_message_text(
         "Теперь выберите валюту, в которую хотите конвертировать",
         query.from_user.id,
         query.message.message_id,
-        # reply_markup=InlineKeyboardMarkup(inline_keyboard=edited_kb),
         reply_markup=edited_kb
     )
 
 
 async def convert_from_callback(query: CallbackQuery, state: FSMContext) -> None:
+    """
+    Handles when user choose the target currency in second inline keyboard
+    :param query:
+    :param state:
+    :return:
+    """
     await ConvertStates.ConvertFrom.set()
     await state.update_data(target=query.data.split(':')[1])
     kb = inline.create_currency_amounts_kb()
@@ -119,6 +140,11 @@ async def convert_amount_callback(query: CallbackQuery, state: FSMContext) -> No
 
 
 async def convert_operator_callback(query: CallbackQuery) -> None:
+    """
+    Handles when user clicks on the operator buttons to change the amount
+    :param query:
+    :return:
+    """
     operator, amount = query.data.split(':')[1:]
     amount = int(amount)
 
