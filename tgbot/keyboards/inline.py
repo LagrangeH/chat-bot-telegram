@@ -51,7 +51,7 @@ currencies = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(text="Австралийский доллар", callback_data="currency:AUD:5:0"),
-            InlineKeyboardButton(text="Новозеландский доллар", callback_data="currency:NZD:5:1"),
+            InlineKeyboardButton(text="Новозеланд. доллар", callback_data="currency:NZD:5:1"),
         ],
         [
             InlineKeyboardButton(text="Китайский юань", callback_data="currency:CNY:6:0"),
@@ -63,7 +63,7 @@ currencies = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(text="Индийская рупия", callback_data="currency:INR:8:0"),
-            InlineKeyboardButton(text="Южноафриканский рэнд", callback_data="currency:ZAR:8:1"),
+            InlineKeyboardButton(text="Южноафр. рэнд", callback_data="currency:ZAR:8:1"),
         ],
 
         [
